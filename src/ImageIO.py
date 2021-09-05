@@ -1,6 +1,6 @@
 import io
 from typing import Tuple
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 class Figure:
@@ -10,13 +10,15 @@ class Figure:
 
 
     @staticmethod
-    def draw(size: Tuple, color: hex = None):
+    def draw_figure(size: Tuple, color: hex = None):
         color = 0x36393f if color is None else color
         new_image = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
         new_image.save(buff, 'png')
         buff.seek(0)
         return buff
+
+
 
 
     @staticmethod
@@ -78,7 +80,6 @@ class Canvas:
         else:
             img = None
 
-
         if img is not None:
             if resize is not None and crop is None:
                 if position is None:
@@ -109,9 +110,35 @@ class Canvas:
             else:
                 raise Exception("Use either Crop or Resize")
         else:
-            raise Exception('Image can\'t be NoneType')
+            raise TypeError('Image can\'t be NoneType')
             
 
 
-    def add_round_image(self, _path:str = None, _byte = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
-        pass
+    def add_round_image(self, _path:str = None, _byte = None, resize:Tuple = None, position:Tuple = None):
+        if _path is not None and _byte is None:
+            img = Image.open(_path)
+        elif _byte is not None and _path is None:
+            img = Image.open(_byte)
+        else:
+            img = None
+
+        if img is not None:
+
+            main = img if resize is None else img.resize(resize)
+            canvas = Image.open(self.canvas)
+
+            mask = Image.new("L", main.size, 0)
+            draw = ImageDraw.Draw(mask)
+            draw.pieslice([(0, 0), main.size], 0, 360,fill=255, outline="white")
+            dim = main.size
+            if position is None:
+                offset = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
+            else:
+                offset = (position[0], position[1])
+            canvas.paste(main, offset, mask)
+            buff = io.BytesIO()
+            canvas.save(buff, 'png')
+            buff.seek(0)
+            self.canvas = buff
+        else:
+            raise TypeError('Image can\'t be NoneType')
