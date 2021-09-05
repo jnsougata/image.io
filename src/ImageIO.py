@@ -142,3 +142,5 @@ class Canvas:
             self.canvas = buff
         else:
             raise TypeError('Image can\'t be NoneType')
+
+            
