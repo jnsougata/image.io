@@ -1,6 +1,6 @@
 import io
 from typing import Tuple
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 class Figure:
@@ -176,3 +176,25 @@ class Canvas:
 
         else:
             raise TypeError('Image can not be NoneType')
+
+    def add_text(self,text:str,size:float = None, color: str or hex = None, position: Tuple = None):
+
+        canvas = Image.open(self.output)
+
+        draw = ImageDraw.Draw(canvas)
+        text = text
+        size = 10 if size is None else size
+        color = 'white' if color is None else color
+
+        font = ImageFont.truetype('arial.ttf', size = size)
+
+        text_width, text_height = draw.textsize(text, font=font)
+        auto_align = ((self.width - text_width) // 2,(self.height - text_height) // 2)
+        offset = auto_align if position is None else position
+
+        draw.text(offset, text, fill= color, font=font, )
+
+        buff = io.BytesIO()
+        canvas.save(buff, 'png')
+        buff.seek(0)
+        self.output = buff
