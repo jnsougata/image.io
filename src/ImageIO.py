@@ -1,3 +1,29 @@
+"""
+MIT License
+
+Copyright (c) 2021 Zen
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+
+
 import io
 from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont
@@ -10,7 +36,7 @@ class Figure:
 
 
     @staticmethod
-    def draw(size: Tuple, color: hex or str = None):
+    def draw(size: Tuple, color:str = None):
         color = 0x36393f if color is None else color
         new_image = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
@@ -28,10 +54,12 @@ class Figure:
 
 class Canvas:
 
-    def __init__(self, size:Tuple, color:hex or str = None):
+    def __init__(self, size:Tuple, color:str = None):
         """
+
         :param size: Tuple of width and height of Canvas
         :param color: Hex or String of the desired color-code
+
         """
 
         color = 0x36393f if color is None else color
@@ -47,18 +75,22 @@ class Canvas:
 
     def show(self):
         """
+
         Shows the Canvas object. Use to check the canvas or image
         :return: None
+
         """
         image = Image.open(self.output)
         image.show()
 
 
-    def set_background(self, _byte = None, _path:str = None):
+    def set_background(self, _byte:bytes = None, _path:str = None):
         """
-        :param _byte: BytesIO object form of the image
-        :param _path: Path where the image is stored locally
+
+        :param _byte: bytes form of the image
+        :param _path: path where the image is stored locally
         :return: None
+
         """
         canvas = Image.open(self.output)
         size = canvas.size
@@ -81,18 +113,21 @@ class Canvas:
 
 
 
-    def add_image(self, _path:str = None, _byte = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
+    def add_image(self, _path:str = None, _byte:bytes = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
         """
-        :param str _path: Path where the image is stored locally
-        :param any _byte: BytesIO object form of the edited image
-        :param Tuple resize: Tuple of length 2 (width, height) to resize the image
-        :param Tuple crop: Tuple of length 4 (left, top, right, bottom) to crop the image
-        :param Tuple position: Tuple of coordinate (x,y) to where the image will be added into canvas
+
+        :param str _path: path where the image is stored locally
+        :param bytes _byte: bytes form of the image
+        :param Tuple resize: tuple of length 2 (width, height) to resize the image
+        :param Tuple crop: tuple of length 4 (left, top, right, bottom) to crop the image
+        :param Tuple position: tuple of coordinate (x,y) to where the image will be added into canvas
         :raises Exception: if _path and _byte both are available
         :raises TypeError: if NoneType is passed as image
         :raises Exception: if crop and resize both are available
         :return: None
+
         """
+
         canvas = Image.open(self.output)
         if _path is not None and _byte is None:
             img = Image.open(_path)
@@ -142,18 +177,21 @@ class Canvas:
             
 
 
-    def add_round_image(self, _path:str = None, _byte = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
+    def add_round_image(self, _path:str = None, _byte:bytes = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
         """
-        :param str _path: Path where the image is stored locally
-        :param any _byte: BytesIO object form of the edited image
-        :param Tuple resize: Tuple of length 2 (width, height) to resize the image
-        :param Tuple crop: Tuple of length 4 (left, top, right, bottom) to crop the image
-        :param Tuple position: Tuple of coordinate (x,y) to where the image will be added into canvas
+
+        :param str _path: path where the image is stored locally
+        :param bytes _byte: bytes form of the image
+        :param Tuple resize: tuple of length 2 (width, height) to resize the image
+        :param Tuple crop: tuple of length 4 (left, top, right, bottom) to crop the image
+        :param Tuple position: tuple of coordinate (x,y) to where the image will be added into canvas
         :raises Exception: if _path and _byte both are available
         :raises TypeError: if NoneType is passed as image
         :raises Exception: if crop and resize both are available
         :return: None
+
         """
+
         canvas = Image.open(self.output)
         if _path is not None and _byte is None:
             img = Image.open(_path)
@@ -215,12 +253,15 @@ class Canvas:
 
     def add_text(self,text:str,size:float = None, color: str or hex = None, position: Tuple = None):
         """
+
         :param str text: text to be added to the image
         :param int size: size of text
         :param str color: name of color or color code
-        :param position: Tuple of coordinate (x,y) to where the text will be added into canvas
+        :param position: tuple of coordinate (x,y) to where the text will be added into canvas
         :return: None
+
         """
+
         canvas = Image.open(self.output)
         draw = ImageDraw.Draw(canvas)
         text = text
