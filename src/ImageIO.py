@@ -22,8 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
-
 import io
 from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont
@@ -34,9 +32,8 @@ class Figure:
     def __init__(self):
         pass
 
-
     @staticmethod
-    def draw(size: Tuple, color:str = None):
+    def draw(size: Tuple, color: str = None):
         color = 0x36393f if color is None else color
         new_image = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
@@ -44,17 +41,15 @@ class Figure:
         buff.seek(0)
         return buff
 
-
     @staticmethod
     def show(source: str or bytes):
         image = Image.open(source)
         image.show()
 
 
-
 class Canvas:
 
-    def __init__(self, size:Tuple, color:str = None):
+    def __init__(self, size: Tuple, color: str = None):
         """
 
         :param size: Tuple of width and height of Canvas
@@ -64,14 +59,13 @@ class Canvas:
 
         color = 0x36393f if color is None else color
         size = size if size is not None and len(size) == 2 else None
-        card = Image.new("RGB", size, color = color)
+        card = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
         card.save(buff, 'png')
         buff.seek(0)
         self.width = size[0]
         self.height = size[1]
         self.output = buff
-
 
     def show(self):
         """
@@ -83,8 +77,7 @@ class Canvas:
         image = Image.open(self.output)
         image.show()
 
-
-    def set_background(self, _byte:bytes = None, _path:str = None):
+    def set_background(self, _byte = None, _path: str = None):
         """
 
         :param _byte: bytes form of the image
@@ -101,7 +94,6 @@ class Canvas:
         else:
             raise Exception("Use either _path or _byte")
 
-
         if bg is not None:
             _bg = bg.resize(size)
             buff = io.BytesIO()
@@ -111,9 +103,8 @@ class Canvas:
         else:
             raise TypeError("Image can not be NoneType")
 
-
-
-    def add_image(self, _path:str = None, _byte:bytes = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
+    def add_image(self, _path: str = None, _byte = None, resize: Tuple = None, crop: Tuple = None,
+                  position: Tuple = None):
         """
 
         :param str _path: path where the image is stored locally
@@ -136,7 +127,6 @@ class Canvas:
         else:
             raise Exception("Use either _path or _byte")
 
-
         if img is not None:
 
             if resize is not None and crop is None:
@@ -146,7 +136,7 @@ class Canvas:
                 _img = img.resize(resize, resample=0)
                 Image.Image.paste(canvas, _img, offset)
                 buff = io.BytesIO()
-                canvas.save(buff,'png')
+                canvas.save(buff, 'png')
                 buff.seek(0)
                 self.output = buff
             elif crop is not None and resize is None:
@@ -174,14 +164,13 @@ class Canvas:
                 raise Exception('Use either Resize or Crop')
         else:
             raise TypeError('Image can not be NoneType')
-            
 
-
-    def add_round_image(self, _path:str = None, _byte:bytes = None, resize:Tuple = None, crop:Tuple = None, position:Tuple = None):
+    def add_round_image(self, _path: str = None, _byte = None, resize: Tuple = None, crop: Tuple = None,
+                        position: Tuple = None):
         """
 
         :param str _path: path where the image is stored locally
-        :param bytes _byte: bytes form of the image
+        :param BytesIO _byte: bytes form of the image
         :param Tuple resize: tuple of length 2 (width, height) to resize the image
         :param Tuple crop: tuple of length 4 (left, top, right, bottom) to crop the image
         :param Tuple position: tuple of coordinate (x,y) to where the image will be added into canvas
@@ -200,14 +189,13 @@ class Canvas:
         else:
             img = None
 
-
         if img is not None:
 
             if resize is not None and crop is None:
                 main = img.resize(resize)
                 mask = Image.new("L", main.size, 0)
                 draw = ImageDraw.Draw(mask)
-                draw.pieslice([(0, 0), main.size], 0, 360,fill=255, outline="white")
+                draw.pieslice([(0, 0), main.size], 0, 360, fill=255, outline="white")
                 dim = main.size
                 auto_align = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
                 manual_align = position
@@ -251,7 +239,7 @@ class Canvas:
         else:
             raise TypeError('Image can not be NoneType')
 
-    def add_text(self,text:str,size:float = None, color: str or hex = None, position: Tuple = None):
+    def add_text(self, text: str, size: float = None, color: str or hex = None, position: Tuple = None):
         """
 
         :param str text: text to be added to the image
@@ -268,13 +256,13 @@ class Canvas:
         size = 10 if size is None else size
         color = 'white' if color is None else color
 
-        font = ImageFont.truetype('arial.ttf', size = size)
+        font = ImageFont.truetype('arial.ttf', size=size)
 
         text_width, text_height = draw.textsize(text, font=font)
-        auto_align = ((self.width - text_width) // 2,(self.height - text_height) // 2)
+        auto_align = ((self.width - text_width) // 2, (self.height - text_height) // 2)
         offset = auto_align if position is None else position
 
-        draw.text(offset, text, fill= color, font=font, )
+        draw.text(offset, text, fill=color, font=font, )
 
         buff = io.BytesIO()
         canvas.save(buff, 'png')
