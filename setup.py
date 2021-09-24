@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name = 'image.io',
-    version = '1.4.2',
+    version = '1.5.0',
     description = 'Easy Image Manipulation',
     long_description = readme(),
     long_description_content_type="text/markdown",
