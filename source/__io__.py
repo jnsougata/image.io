@@ -1,4 +1,3 @@
-
 import io
 from typing import Tuple
 import urllib.request as req
@@ -6,13 +5,20 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
 
-class Figure:
+class Io:
 
     def __init__(self):
         pass
 
     @staticmethod
     def draw(size: Tuple, color: str = None):
+
+        """
+        :param size: dimension of the image to be created
+        :param color: color of the image (hex string or hex)
+        :return: image in form BytesIO object
+        """
+
         color = 0x36393f if color is None else color
         new_image = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
@@ -20,10 +26,20 @@ class Figure:
         buff.seek(0)
         return buff
 
-    @staticmethod
-    def show(source: str or bytes):
-        image = Image.open(source)
-        image.show()
+    @classmethod
+    def fetch_image(cls, url: str):
+
+        """
+        :param url: url of the image to be fetched
+        :return: image form the url in the form of BytesIO Object
+        """
+
+        response = req.urlopen(url)
+        img = Image.open(response)
+        buff = io.BytesIO()
+        img.save(buff, 'png')
+        buff.seek(0)
+        return buff
 
 
 
@@ -46,17 +62,6 @@ class Canvas:
         self.width = size[0]
         self.height = size[1]
         self.output = buff
-
-
-    def show(self):
-
-        """
-        Shows the Canvas object. Use to check the canvas or image
-        :return: None
-        """
-
-        image = Image.open(self.output)
-        image.show()
 
 
 
@@ -236,17 +241,16 @@ class Canvas:
 
 
 
-    def add_text(self, text: str, font_pack:str, auto_align:bool, size: float = None, color: str or hex = None,
+    def add_text(self, text: str, font_pack:str, auto_align:bool, size: float = None, color: str = None,
                  position: Tuple = None):
 
         """
         :param str text: text to be added to the image
         :param str font_pack: link to the path of font pack [.ttf]
-        :param auto_align: for horizontal text alignment
+        :param bool auto_align: for horizontal text alignment
         :param int size: size of text
         :param str color: name of color or color code
-        :param position: tuple of coordinate (x,y) to where the text will be added into canvas
-
+        :param Tuple position: tuple of coordinate (x,y) to where the text will be added into canvas
         :return: None
         """
 
@@ -273,24 +277,19 @@ class Canvas:
             elif auto is False and pos is not None:
                 return pos
 
-        draw.text(align(auto_align,position), text, fill=color, font=font)
+        draw.text(align(auto_align, position), text, fill=color, font=font)
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
         self.output = buff
 
 
+    def show(self):
 
-class Io:
+        """
+        Shows the Canvas object. Use to preview the canvas or image
+        :return: None
+        """
 
-    def __init__(self) -> None:
-        pass
-
-    @classmethod
-    def url_to_image(cls, url:str):
-        response = req.urlopen(url=url)
-        img = Image.open(response)
-        buff = io.BytesIO()
-        img.save(buff, 'png')
-        buff.seek(0)
-        return buff
+        image = Image.open(self.output)
+        image.show()
