@@ -27,7 +27,7 @@ class Io:
         return buff
 
     @classmethod
-    def fetch_image(cls, url: str):
+    def fetch(cls, url: str):
 
         """
         :param url: url of the image to be fetched
@@ -41,7 +41,18 @@ class Io:
         buff.seek(0)
         return buff
 
+    @classmethod
+    def save(cls, _byte, name:str):
 
+        """
+        :param _byte: image of BytesIO form
+        :param str name: name of the image with extension
+        :return: None
+        """
+
+        img = Image.open(_byte)
+        img.save(name)
+        return None
 
 
 class Canvas:
@@ -283,7 +294,7 @@ class Canvas:
         buff.seek(0)
         self.output = buff
 
-
+    @property
     def show(self):
 
         """
@@ -293,3 +304,15 @@ class Canvas:
 
         image = Image.open(self.output)
         image.show()
+        return None
+
+
+    def save(self, name:str):
+
+        """
+        :param name: name of the image with extension
+        :return: None
+        """
+
+        img = Image.open(self.output)
+        img.save(name)
