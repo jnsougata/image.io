@@ -1,3 +1,3 @@
-# Image.IO
+# image.io
 
 # On Dvelopment
