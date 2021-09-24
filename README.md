@@ -10,7 +10,7 @@
 - **Imports:**
 	- `from ImageIO import Io, Canvas`
 	
-- **Code Walk through:**
+- **Code walk through:**
 	- **Draw an image:**
 		- `img  = Io.draw(size = (width, height), color:hex or str [optioanl])`
 			> Returns a rect image (BytesIO Form) of color of give hex string
