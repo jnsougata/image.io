@@ -1,6 +1,5 @@
-
-
-# ImageIO 
+# ImageIO
+![alt text](https://raw.githubusercontent.com/jnsougata/image.io/main/samples/example.png)
 
 **ImageIO**  is a package created to power the user with easy image manipulation like  **circular cropping**,  **merging two images**,  **adding text**  etc.
 
