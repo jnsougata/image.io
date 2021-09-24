@@ -8,14 +8,15 @@ def readme():
 
 setup(
     name = 'image.io',
-    version = '0.0.1',
+    version = '1.4.2',
     description = 'Easy Image Manipulation',
     long_description = readme(),
     long_description_content_type="text/markdown",
-    py_modules = ["DYA"],
-    package_dir = {'': 'src'},
-    install_requires = [
-        'pillow'
+    package_dir={'ImageIO': 'source'},
+    packages=['ImageIO'],
+    install_requires=[
+        'pillow',
+        'urllib3'
     ],
     url = 'https://github.com/jnsougata/Image.IO',
     project_urls={
