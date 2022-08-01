@@ -24,14 +24,14 @@ class Canvas:
         buff = io.BytesIO()
         card.save(buff, 'png')
         buff.seek(0)
-        self.__buff = buff
+        self.__buffer = buff
 
     def load_fonts(self, *fonts: PathLike):
         for font in fonts:
             self.fonts.append(font)
 
     def background(self, path: PathLike, *, blur_level: int = MISSING):
-        canvas = Image.open(self.__buff)
+        canvas = Image.open(self.__buffer)
         bg = Image.open(path)
         if bg.mode != 'RGBA':
             bg = bg.convert('RGBA')
@@ -41,7 +41,7 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.__buff = buff
+        self.__buffer = buff
 
     def image(
             self,
@@ -58,7 +58,7 @@ class Canvas:
             crop_bottom: int = MISSING,
             blur_level: int = MISSING,
     ):
-        canvas = Image.open(self.__buff)
+        canvas = Image.open(self.__buffer)
         img = Image.open(path)
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
@@ -89,7 +89,7 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.__buff = buff
+        self.__buffer = buff
 
     def round_image(
             self,
@@ -106,7 +106,7 @@ class Canvas:
             crop_bottom: int = MISSING,
             blur_level: int = MISSING,
     ):
-        canvas = Image.open(self.__buff)
+        canvas = Image.open(self.__buffer)
         img = Image.open(path)
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
@@ -147,7 +147,7 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.__buff = buff
+        self.__buffer = buff
 
     def text(
             self,
@@ -166,19 +166,23 @@ class Canvas:
             raise ValueError('fonts cannot be empty if text is used. use `load_font(...)` to add fonts')
         if font_index >= len(self.fonts):
             raise ValueError('font_index cannot be greater than the number of fonts added to the canvas')
-        canvas = Image.open(self.__buff)
+        canvas = Image.open(self.__buffer)
         font = ImageFont.truetype(self.fonts[font_index], size=font_size)
         draw = ImageDraw.Draw(canvas)
         text_width, text_height = draw.textsize(text, font=font, spacing=text_spacing)
         if position_left is MISSING and position_top is not MISSING:
+            left_wrap = 0
             offset = (self.width - text_width) / 2, position_top
         elif position_left is not MISSING and position_top is MISSING:
+            left_wrap = position_left
             offset = position_left, (self.height - text_height) / 2
         elif position_left is MISSING and position_top is MISSING:
+            left_wrap = 0
             offset = (self.width - text_width) / 2, (self.height - text_height) / 2
         else:
+            left_wrap = position_left
             offset = position_left, position_top
-        if (len(text) * (font_size / 2)) - position_left > self.width:
+        if (len(text) * (font_size / 2)) - left_wrap > self.width:
             width = int(self.width / (font_size / 1.15))
             text = textwrap.fill(text, width=width)
         else:
@@ -188,14 +192,14 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.__buff = buff
+        self.__buffer = buff
 
     def read(self) -> io.BytesIO:
-        return self.__buff
+        return self.__buffer
 
     def show(self):
-        Image.open(self.__buff).show()
+        Image.open(self.__buffer).show()
 
     def save(self, path: PathLike):
-        img = Image.open(self.__buff)
+        img = Image.open(self.__buffer)
         img.save(path)
