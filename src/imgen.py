@@ -20,7 +20,7 @@ class Canvas:
     ):
         self.fonts = []
         self.width, self.height = width, height
-        card = Image.new("RGB", (width, height), color='white')
+        card = Image.new("RGB", (width, height), color=color)
         buff = io.BytesIO()
         card.save(buff, 'png')
         buff.seek(0)
