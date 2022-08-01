@@ -7,9 +7,9 @@ def readme():
 
 
 setup(
-    name='imagen',
+    name='imgen',
     version='0.0.1',
-    description='image-card generator/manipulator',
+    description='easy image manipulation and card generation',
     long_description=readme(),
     long_description_content_type="text/markdown",
     package_dir={'imgen': 'src'},
