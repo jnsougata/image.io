@@ -33,6 +33,8 @@ class Canvas:
     def background(self, path: PathLike, *, blur_level: int = MISSING):
         canvas = Image.open(self.__buff)
         bg = Image.open(path)
+        if bg.mode != 'RGB':
+            bg = bg.convert('RGB')
         if blur_level is not MISSING:
             bg = bg.filter(ImageFilter.GaussianBlur(radius=blur_level))
         canvas.paste(bg.resize((self.width, self.height), resample=Image.LANCZOS), (0, 0, self.width, self.height))
@@ -58,6 +60,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
         if rotate is not MISSING:
             img = img.rotate(rotate)
         if blur_level is not MISSING:
@@ -104,6 +108,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
         if rotate is not MISSING:
             img = img.rotate(rotate)
         if blur_level is not MISSING:
