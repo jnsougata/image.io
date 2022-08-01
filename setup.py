@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     package_dir={'imgen': 'src'},
     packages=['imgen'],
-    install_requires=['pillow', 'urllib3'],
+    install_requires=['pillow'],
     url='https://github.com/jnsougata/imgen',
     project_urls={"Bug Tracker": "https://github.com/jnsougata/imgen/issues"},
     author='Sougata Jana',
