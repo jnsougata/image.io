@@ -172,8 +172,9 @@ class Canvas:
             offset = (self.width - text_width) / 2, (self.height - text_height) / 2
         else:
             offset = position_left, position_top
-        if len(text) * font_size // 2 > self.width:
-            text = textwrap.fill(text, width=int(self.width // font_size * 1.199999))
+        if (len(text) * (font_size / 2)) - position_left > self.width:
+            width = int(self.width / (font_size / 1.15))
+            text = textwrap.fill(text, width=width)
         else:
             draw.text(offset, text, font=font, fill=font_color, spacing=text_spacing)
 
