@@ -2,6 +2,7 @@ import io
 import os
 from typing import Tuple, Union, List
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import textwrap
 
 
 MISSING = object()
@@ -46,6 +47,7 @@ class Canvas:
             position_left: int = MISSING,
             position_top: int = MISSING,
             *,
+            rotate: int = MISSING,
             resize_x: int = MISSING,
             resize_y: int = MISSING,
             crop_left: int = MISSING,
@@ -56,6 +58,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if rotate is not MISSING:
+            img = img.rotate(rotate)
         if blur_level is not MISSING:
             img = img.filter(ImageFilter.GaussianBlur(radius=blur_level))
         if resize_x is not MISSING and resize_y is MISSING:
@@ -89,6 +93,7 @@ class Canvas:
             position_left: int = MISSING,
             position_top: int = MISSING,
             *,
+            rotate: int = MISSING,
             resize_x: int = MISSING,
             resize_y: int = MISSING,
             crop_left: int = MISSING,
@@ -99,6 +104,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if rotate is not MISSING:
+            img = img.rotate(rotate)
         if blur_level is not MISSING:
             img = img.filter(ImageFilter.GaussianBlur(radius=blur_level))
         if img.width != img.height:
@@ -165,6 +172,11 @@ class Canvas:
             offset = (self.width - text_width) / 2, (self.height - text_height) / 2
         else:
             offset = position_left, position_top
+        if len(text) * font_size // 2 > self.width:
+            text = textwrap.fill(text, width=int(self.width // font_size * 1.199999))
+        else:
+            draw.text(offset, text, font=font, fill=font_color, spacing=text_spacing)
+
         draw.text(offset, text, font=font, fill=font_color)
         buff = io.BytesIO()
         canvas.save(buff, 'png')
