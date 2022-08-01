@@ -1,24 +1,36 @@
 import io
-from typing import Tuple, Union
+import os
+from typing import Tuple, Union, List
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
+
+MISSING = object()
 PathLike = Union[str, bytes, io.BytesIO]
 ColorLike = Union[str, Tuple[int, int, int], float, int]
-MISSING = object()
 
 
 class Canvas:
 
-    def __init__(self, width: int = 1280, height: int = 720, color: ColorLike = 'white'):
+    def __init__(
+            self,
+            width: int = 2048,
+            height: int = 1080,
+            color: ColorLike = 'white',
+    ):
+        self.fonts = []
         self.width, self.height = width, height
         card = Image.new("RGB", (width, height), color='white')
         buff = io.BytesIO()
         card.save(buff, 'png')
         buff.seek(0)
-        self.buff = buff
+        self.__buff = buff
+
+    def load_fonts(self, *fonts: PathLike):
+        for font in fonts:
+            self.fonts.append(font)
 
     def background(self, path: PathLike, *, blur_level: int = MISSING):
-        canvas = Image.open(self.buff)
+        canvas = Image.open(self.__buff)
         bg = Image.open(path)
         if blur_level is not MISSING:
             bg = bg.filter(ImageFilter.GaussianBlur(radius=blur_level))
@@ -26,7 +38,7 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.buff = buff
+        self.__buff = buff
 
     def image(
             self,
@@ -39,10 +51,13 @@ class Canvas:
             crop_left: int = MISSING,
             crop_top: int = MISSING,
             crop_right: int = MISSING,
-            crop_bottom: int = MISSING
+            crop_bottom: int = MISSING,
+            blur_level: int = MISSING,
     ):
-        canvas = Image.open(self.buff)
+        canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if blur_level is not MISSING:
+            img = img.filter(ImageFilter.GaussianBlur(radius=blur_level))
         if resize_x is not MISSING and resize_y is MISSING:
             img = img.resize((resize_x, img.size[1]))
         elif resize_x is MISSING and resize_y is not MISSING:
@@ -66,7 +81,7 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.buff = buff
+        self.__buff = buff
 
     def round_image(
             self,
@@ -79,10 +94,19 @@ class Canvas:
             crop_left: int = MISSING,
             crop_top: int = MISSING,
             crop_right: int = MISSING,
-            crop_bottom: int = MISSING
+            crop_bottom: int = MISSING,
+            blur_level: int = MISSING,
     ):
-        canvas = Image.open(self.buff)
+        canvas = Image.open(self.__buff)
         img = Image.open(path)
+        if blur_level is not MISSING:
+            img = img.filter(ImageFilter.GaussianBlur(radius=blur_level))
+        if img.width != img.height:
+            crop_val = (max(img.size) - min(img.size)) // 2
+            if img.height > img.width:
+                img = img.crop((0, crop_val, img.width, img.height - crop_val))
+            else:
+                img = img.crop((crop_val, 0, img.width - crop_val, img.height))
         if resize_x is not MISSING and resize_y is MISSING:
             img = img.resize((resize_x, img.size[1]))
         elif resize_x is MISSING and resize_y is not MISSING:
@@ -106,36 +130,33 @@ class Canvas:
         mask = Image.new("L", img.size, 0)
         draw = ImageDraw.Draw(mask)
         draw.pieslice(((0, 0), img.size), 0, 360, fill=255, outline="white")
-        if position_left == 0 and position_top != 0:
-            offset = (self.width - img.size[0]) / 2, position_top
-        elif position_left != 0 and position_top == 0:
-            offset = position_left, (self.height - img.size[1]) / 2
-        else:
-            offset = position_left,
         canvas.paste(img, offset, mask)
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.buff = buff
+        self.__buff = buff
 
     def text(
             self,
             text: str,
-            font_pack: PathLike,
-            *,
-            font_size: int = 30,
+            text_spacing: float = 0.0,
             position_left: float = MISSING,
             position_top: float = MISSING,
+            *,
+            font_index: int = 0,
+            font_size: int = 30,
             font_color: ColorLike = 'black',
     ):
         if text == '':
             raise ValueError('text cannot be empty')
-
-        canvas = Image.open(self.buff)
-        font = ImageFont.truetype(font_pack, size=font_size)
+        if len(self.fonts) == 0:
+            raise ValueError('fonts cannot be empty if text is used. use `load_font(...)` to add fonts')
+        if font_index >= len(self.fonts):
+            raise ValueError('font_index cannot be greater than the number of fonts added to the canvas')
+        canvas = Image.open(self.__buff)
+        font = ImageFont.truetype(self.fonts[font_index], size=font_size)
         draw = ImageDraw.Draw(canvas)
-        text_width, text_height = draw.textsize(text, font=font)
-
+        text_width, text_height = draw.textsize(text, font=font, spacing=text_spacing)
         if position_left is MISSING and position_top is not MISSING:
             offset = (self.width - text_width) / 2, position_top
         elif position_left is not MISSING and position_top is MISSING:
@@ -148,11 +169,14 @@ class Canvas:
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
-        self.buff = buff
+        self.__buff = buff
+
+    def read(self) -> bytes:
+        return self.__buff.read()
 
     def show(self):
-        Image.open(self.buff).show()
+        Image.open(self.__buff).show()
 
     def save(self, path: PathLike):
-        img = Image.open(self.buff)
+        img = Image.open(self.__buff)
         img.save(path)
