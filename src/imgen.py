@@ -33,8 +33,8 @@ class Canvas:
     def background(self, path: PathLike, *, blur_level: int = MISSING):
         canvas = Image.open(self.__buff)
         bg = Image.open(path)
-        if bg.mode != 'RGB':
-            bg = bg.convert('RGB')
+        if bg.mode != 'RGBA':
+            bg = bg.convert('RGBA')
         if blur_level is not MISSING:
             bg = bg.filter(ImageFilter.GaussianBlur(radius=blur_level))
         canvas.paste(bg.resize((self.width, self.height), resample=Image.LANCZOS), (0, 0, self.width, self.height))
@@ -60,8 +60,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
         if rotate is not MISSING:
             img = img.rotate(rotate)
         if blur_level is not MISSING:
@@ -108,8 +108,8 @@ class Canvas:
     ):
         canvas = Image.open(self.__buff)
         img = Image.open(path)
-        if img.mode != 'RGB':
-            img = img.convert('RGB')
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
         if rotate is not MISSING:
             img = img.rotate(rotate)
         if blur_level is not MISSING:
@@ -190,8 +190,8 @@ class Canvas:
         buff.seek(0)
         self.__buff = buff
 
-    def read(self) -> bytes:
-        return self.__buff.read()
+    def read(self) -> io.BytesIO:
+        return self.__buff
 
     def show(self):
         Image.open(self.__buff).show()
