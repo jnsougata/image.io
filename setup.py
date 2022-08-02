@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='imgen',
-    version='0.0.1',
+    version='0.0.2',
     description='easy image manipulation and card generation',
     long_description=readme(),
     long_description_content_type="text/markdown",
