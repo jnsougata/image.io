@@ -208,7 +208,5 @@ class Canvas:
     def accent(self) -> ColorLike:
         canvas = Image.open(self.__buffer)
         copied_canvas = canvas.copy().convert('RGBA')
-        pix = copied_canvas.resize((1, 1), resample=0).getpixel((0, 0))
-        r, g, b, a = pix
-        print(r, g, b, a)
+        r, g, b, a = copied_canvas.resize((1, 1), resample=0).getpixel((0, 0))
         return f'#{r:02x}{g:02x}{b:02x}'
