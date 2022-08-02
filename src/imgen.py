@@ -204,9 +204,15 @@ class Canvas:
         img = Image.open(self.__buffer)
         img.save(path)
 
+    @staticmethod
+    def get_accent(path: PathLike) -> ColorLike:
+        img = Image.open(path).convert('RGBA')
+        r, g, b, _ = img.resize((1, 1), resample=0).getpixel((0, 0))
+        return f'#{r:02x}{g:02x}{b:02x}'
+
     @property
     def accent(self) -> ColorLike:
         canvas = Image.open(self.__buffer)
         copied_canvas = canvas.copy().convert('RGBA')
-        r, g, b, a = copied_canvas.resize((1, 1), resample=0).getpixel((0, 0))
+        r, g, b, _ = copied_canvas.resize((1, 1), resample=0).getpixel((0, 0))
         return f'#{r:02x}{g:02x}{b:02x}'
